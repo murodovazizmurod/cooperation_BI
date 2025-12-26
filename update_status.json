@@ -1,10 +1,10 @@
 {
-  "last_update": "2025-12-26T17:34:01.396887",
-  "last_success": "2025-12-26T17:34:01.396895",
+  "last_update": "2025-12-26T17:51:16.945481",
+  "last_success": "2025-12-26T17:51:16.945490",
   "last_error": null,
-  "total_updates": 6,
-  "total_new_offers": 2812,
-  "total_updated_offers": 216825,
-  "total_deleted_offers": 2394,
+  "total_updates": 7,
+  "total_new_offers": 3088,
+  "total_updated_offers": 252724,
+  "total_deleted_offers": 2488,
   "current_status": "running"
 }
