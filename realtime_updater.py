@@ -380,6 +380,8 @@ def signal_handler(sig, frame):
 
 def main():
     """Main entry point"""
+    global MAX_CATEGORIES_PER_CYCLE, REQUEST_TIMEOUT
+    
     import argparse
     
     parser = argparse.ArgumentParser(description='Сервис обновления базы данных в реальном времени')
@@ -395,7 +397,6 @@ def main():
     args = parser.parse_args()
     
     # Set global config
-    global MAX_CATEGORIES_PER_CYCLE, REQUEST_TIMEOUT
     MAX_CATEGORIES_PER_CYCLE = args.max_categories
     REQUEST_TIMEOUT = args.timeout
     
