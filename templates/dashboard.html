@@ -1,0 +1,1696 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель управления рынком Cooperation.uz</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', sans-serif;
+            background: #f3f2f1;
+            color: #323130;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Top Navigation Bar */
+        .top-nav {
+            background: linear-gradient(90deg, #0078d4 0%, #106ebe 100%);
+            padding: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-content {
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .nav-brand h1 {
+            color: white;
+            font-size: 1.5em;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+        
+        .nav-brand .brand-icon {
+            font-size: 1.8em;
+        }
+        
+        .nav-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1920px;
+            margin: 0 auto;
+            padding: 24px 32px;
+        }
+        
+        /* Page Header */
+        .page-header {
+            margin-bottom: 24px;
+        }
+        
+        .page-title {
+            font-size: 1.75em;
+            font-weight: 600;
+            color: #323130;
+            margin-bottom: 8px;
+        }
+        
+        .page-subtitle {
+            color: #605e5c;
+            font-size: 0.95em;
+        }
+        
+        /* Stats Grid - Power BI Style */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 1.6px 3.6px rgba(0,0,0,0.13), 0 0.3px 0.9px rgba(0,0,0,0.1);
+            border-left: 4px solid transparent;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card:nth-child(1) { border-left-color: #0078d4; }
+        .stat-card:nth-child(2) { border-left-color: #00bcf2; }
+        .stat-card:nth-child(3) { border-left-color: #00b294; }
+        .stat-card:nth-child(4) { border-left-color: #ffb900; }
+        .stat-card:nth-child(5) { border-left-color: #8661c5; }
+        .stat-card:nth-child(6) { border-left-color: #e74856; }
+        
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 3.2px 7.2px rgba(0,0,0,0.18), 0 0.6px 1.8px rgba(0,0,0,0.14);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(0,120,212,0.05) 0%, transparent 70%);
+        }
+        
+        .stat-card h3 {
+            color: #605e5c;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .stat-card .value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #323130;
+            margin-bottom: 4px;
+            line-height: 1.2;
+        }
+        
+        .stat-card .subtitle {
+            color: #8a8886;
+            font-size: 0.85em;
+        }
+        
+        /* Chart Containers */
+        .chart-container {
+            background: white;
+            padding: 24px;
+            border-radius: 4px;
+            box-shadow: 0 1.6px 3.6px rgba(0,0,0,0.13), 0 0.3px 0.9px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+        
+        .chart-container h2 {
+            color: #323130;
+            margin-bottom: 20px;
+            font-size: 1.25em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+        
+        .chart-wrapper.small {
+            height: 300px;
+        }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 24px;
+        }
+        
+        /* Table Styling */
+        .table-container {
+            background: white;
+            padding: 24px;
+            border-radius: 4px;
+            box-shadow: 0 1.6px 3.6px rgba(0,0,0,0.13), 0 0.3px 0.9px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+            overflow-x: auto;
+        }
+        
+        .table-container h2 {
+            color: #323130;
+            margin-bottom: 20px;
+            font-size: 1.25em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        
+        th {
+            background: #f3f2f1;
+            color: #323130;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #0078d4;
+        }
+        
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #edebe9;
+            font-size: 0.9em;
+        }
+        
+        tbody tr {
+            transition: background 0.15s ease;
+        }
+        
+        tbody tr:hover {
+            background: #faf9f8;
+        }
+        
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+        
+        /* Buttons */
+        .refresh-btn {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 1.6px 3.6px rgba(0,0,0,0.13);
+        }
+        
+        .refresh-btn:hover {
+            background: #106ebe;
+            box-shadow: 0 3.2px 7.2px rgba(0,0,0,0.18);
+        }
+        
+        .refresh-btn:active {
+            transform: scale(0.98);
+        }
+        
+        /* Period Filter Buttons */
+        .filter-section {
+            margin-bottom: 20px;
+            padding: 16px;
+            background: #faf9f8;
+            border-radius: 4px;
+            border-left: 4px solid #0078d4;
+        }
+        
+        .filter-label {
+            font-weight: 600;
+            color: #323130;
+            font-size: 0.9em;
+            margin-bottom: 12px;
+            display: block;
+        }
+        
+        .filter-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .period-btn {
+            background: white;
+            color: #323130;
+            border: 1px solid #d2d0ce;
+            padding: 8px 20px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .period-btn:hover {
+            background: #f3f2f1;
+            border-color: #0078d4;
+            color: #0078d4;
+        }
+        
+        .period-btn.active {
+            background: #0078d4;
+            color: white;
+            border-color: #0078d4;
+        }
+        
+        .custom-date-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: 12px;
+            padding-left: 12px;
+            border-left: 1px solid #d2d0ce;
+        }
+        
+        .custom-date-group label {
+            font-size: 0.85em;
+            color: #605e5c;
+            font-weight: 500;
+        }
+        
+        .custom-date-group input[type="date"] {
+            padding: 7px 12px;
+            border: 1px solid #d2d0ce;
+            border-radius: 2px;
+            font-size: 0.85em;
+            font-family: inherit;
+            transition: border-color 0.2s ease;
+        }
+        
+        .custom-date-group input[type="date"]:focus {
+            outline: none;
+            border-color: #0078d4;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 80px 20px;
+            color: #605e5c;
+            font-size: 1.1em;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s steps(4, end) infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .timestamp {
+            color: #8a8886;
+            font-size: 0.85em;
+            margin-top: 8px;
+        }
+        
+        /* Modal */
+        #productModal {
+            animation: fadeIn 0.2s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to { 
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            padding: 32px;
+            border-radius: 4px;
+            max-width: 900px;
+            box-shadow: 0 6.4px 14.4px rgba(0,0,0,0.18), 0 1.2px 3.6px rgba(0,0,0,0.14);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f3f2f1;
+        }
+        
+        .modal-close-btn {
+            background: #e74856;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 600;
+            transition: background 0.2s ease;
+        }
+        
+        .modal-close-btn:hover {
+            background: #d83b45;
+        }
+        
+        /* Detail Cards in Modal */
+        .detail-card {
+            background: #faf9f8;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            border-left: 4px solid #0078d4;
+        }
+        
+        .detail-card h3 {
+            color: #323130;
+            font-size: 1em;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+        }
+        
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .detail-label {
+            color: #8a8886;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        
+        .detail-value {
+            color: #323130;
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-content {
+                padding: 12px 16px;
+            }
+            
+            .container {
+                padding: 16px;
+            }
+            
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 12px;
+            }
+            
+            .custom-date-group {
+                margin-left: 0;
+                padding-left: 0;
+                border-left: none;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="top-nav">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <span class="brand-icon">📊</span>
+                <h1>Cooperation.uz Аналитика</h1>
+            </div>
+            <div class="nav-actions">
+                <div id="updateStatus"></div>
+                <button class="refresh-btn" id="autoRefreshBtn" onclick="toggleAutoRefresh()">⏸️ Приостановить</button>
+                <button class="refresh-btn" onclick="loadData()">🔄 Обновить</button>
+                <div class="timestamp" id="timestamp"></div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div id="loading" class="loading">Загрузка данных панели</div>
+        
+        <div id="dashboard" style="display: none;">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h2 class="page-title">Панель рыночной аналитики</h2>
+                <p class="page-subtitle">Анализ рынка и тенденции в реальном времени от Cooperation.uz</p>
+            </div>
+            
+            <!-- Statistics Cards -->
+            <div class="stats-grid" id="statsGrid"></div>
+            
+            <!-- Top Categories Chart -->
+            <div class="chart-container">
+                <h2>📊 Топ категории по количеству предложений</h2>
+                <div class="chart-wrapper">
+                    <canvas id="categoriesChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Price Distribution -->
+            <div class="chart-container">
+                <h2>💰 Распределение цен</h2>
+                <div class="chart-wrapper">
+                    <canvas id="priceChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Recent Activity -->
+            <div class="grid-2">
+                <div class="chart-container">
+                    <h2>📈 Недавняя активность (последние 7 дней)</h2>
+                    <div class="chart-wrapper small">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h2>📋 Требования к сертификатам</h2>
+                    <div class="chart-wrapper small">
+                        <canvas id="certificateChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <!-- Daily Posting Trends -->
+            <div class="chart-container">
+                <h2>📅 Ежедневные тенденции (последние 30 дней)</h2>
+                <div class="chart-wrapper">
+                    <canvas id="dailyTrendsChart"></canvas>
+                </div>
+                <div id="yesterdayStats" style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 10px;"></div>
+            </div>
+            
+            <!-- Trending Products -->
+            <div class="grid-2">
+                <div class="chart-container">
+                    <h2>🔥 Популярные товары (последние 7 дней)</h2>
+                    <div class="chart-wrapper small">
+                        <canvas id="trendingChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h2>📊 Спрос: неделя vs месяц</h2>
+                    <div class="chart-wrapper small">
+                        <canvas id="demandChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Weekly/Monthly Trends Tables -->
+            <div class="grid-2">
+                <div class="table-container">
+                    <h2>📈 Самые востребованные товары - эта неделя</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ранг</th>
+                                <th>Товар</th>
+                                <th>Объявлений</th>
+                                <th>Средняя цена</th>
+                                <th>Общее кол-во</th>
+                            </tr>
+                        </thead>
+                        <tbody id="weeklyProductsBody"></tbody>
+                    </table>
+                </div>
+                
+                <div class="table-container">
+                    <h2>📈 Самые востребованные товары - этот месяц</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ранг</th>
+                                <th>Товар</th>
+                                <th>Объявлений</th>
+                                <th>Средняя цена</th>
+                                <th>Общее кол-во</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthlyProductsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Top Products Table -->
+            <div class="table-container">
+                <h2>🏆 Наиболее публикуемые товары - детальный анализ</h2>
+                <div style="margin-bottom: 20px; color: #605e5c; font-size: 0.9em;">
+                    Нажмите на строку товара для просмотра подробной информации о ценах и статистике
+                </div>
+                
+                <!-- Period Filter Controls -->
+                <div class="filter-section">
+                    <label class="filter-label">Фильтр периода времени</label>
+                    <div class="filter-controls">
+                        <button class="period-btn active" data-period="all" onclick="setPeriodFilter('all')">Все время</button>
+                        <button class="period-btn" data-period="7" onclick="setPeriodFilter('7')">7 дней</button>
+                        <button class="period-btn" data-period="30" onclick="setPeriodFilter('30')">30 дней</button>
+                        <button class="period-btn" data-period="90" onclick="setPeriodFilter('90')">90 дней</button>
+                        <div class="custom-date-group">
+                            <label>Свой период:</label>
+                            <input type="date" id="startDate" onchange="setCustomPeriod()">
+                            <span style="color: #8a8886;">до</span>
+                            <input type="date" id="endDate" onchange="setCustomPeriod()">
+                        </div>
+                    </div>
+                </div>
+                
+                <table id="productsTable">
+                    <thead>
+                        <tr>
+                            <th>Ранг</th>
+                            <th>Название товара</th>
+                            <th>Категория</th>
+                            <th>Объявлений</th>
+                            <th>Ср. цена</th>
+                            <th>Мин. цена</th>
+                            <th>Макс. цена</th>
+                            <th>Диапазон цен</th>
+                            <th>Всего кол-во</th>
+                            <th>Общая стоимость</th>
+                            <th>Сертификат</th>
+                            <th>Детали</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody"></tbody>
+                </table>
+            </div>
+            
+            <!-- Product Detail Modal -->
+            <div id="productModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; overflow-y: auto;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2 id="modalProductName" style="color: #323130; margin: 0; font-size: 1.5em; font-weight: 600;"></h2>
+                        <button onclick="closeProductModal()" class="modal-close-btn">✕ Закрыть</button>
+                    </div>
+                    <div id="modalProductDetails"></div>
+                </div>
+            </div>
+            
+            <!-- Top Categories Table -->
+            <div class="table-container">
+                <h2>📦 Статистика категорий</h2>
+                <table id="categoriesTable">
+                    <thead>
+                        <tr>
+                            <th>Категория</th>
+                            <th>Предложений</th>
+                            <th>Ср. цена (UZS)</th>
+                            <th>Мин. цена</th>
+                            <th>Макс. цена</th>
+                            <th>Общее количество</th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoriesTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let charts = {};
+        let currentPeriodFilter = 'all';
+        let currentStartDate = null;
+        let currentEndDate = null;
+        let autoRefreshEnabled = true;
+        let autoRefreshInterval = 60000; // 60 seconds
+        let autoRefreshTimer = null;
+        let lastUpdateTime = null;
+        
+        function formatNumber(num) {
+            return new Intl.NumberFormat('uz-UZ').format(Math.round(num));
+        }
+        
+        function formatCurrency(num) {
+            return formatNumber(num) + ' UZS';
+        }
+        
+        function setPeriodFilter(period) {
+            currentPeriodFilter = period;
+            currentStartDate = null;
+            currentEndDate = null;
+            
+            // Update button styles
+            document.querySelectorAll('.period-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.getAttribute('data-period') === period) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Clear custom date inputs
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            
+            // Load products with filter
+            loadProductsTable();
+        }
+        
+        function setCustomPeriod() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            
+            if (startDate && endDate) {
+                currentPeriodFilter = 'custom';
+                currentStartDate = startDate;
+                currentEndDate = endDate;
+                
+                // Update button styles
+                document.querySelectorAll('.period-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Load products with filter
+                loadProductsTable();
+            }
+        }
+        
+        async function loadProductsTable() {
+            try {
+                let url = '/api/top-products?limit=50';
+                
+                if (currentPeriodFilter === 'custom' && currentStartDate && currentEndDate) {
+                    url += `&start_date=${currentStartDate}&end_date=${currentEndDate}`;
+                } else if (currentPeriodFilter !== 'all') {
+                    const days = parseInt(currentPeriodFilter);
+                    const endDate = new Date();
+                    const startDate = new Date();
+                    startDate.setDate(startDate.getDate() - days);
+                    
+                    url += `&start_date=${startDate.toISOString().split('T')[0]}&end_date=${endDate.toISOString().split('T')[0]}`;
+                }
+                
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const products = await response.json();
+                updateProductsTable(products);
+            } catch (error) {
+                console.error('Error loading products table:', error);
+            }
+        }
+        
+        function updateProductsTable(products) {
+            const productsBody = document.getElementById('productsTableBody');
+            productsBody.innerHTML = products.slice(0, 30).map((product, index) => {
+                const priceRange = product.max_price - product.min_price;
+                const priceRangePercent = product.avg_price > 0 ? ((priceRange / product.avg_price) * 100).toFixed(1) : 0;
+                
+                return `
+                <tr onclick="showProductDetails(${index})" style="cursor: pointer;" onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background=''">
+                    <td><strong>${index + 1}</strong></td>
+                    <td>
+                        <strong>${product.product_name}</strong>
+                        ${product.has_multiple_units ? '<br><small style="color: #f44336;">⚠ Несколько единиц</small>' : ''}
+                    </td>
+                    <td style="font-size: 0.85em; color: #666;">${product.category_name.substring(0, 40)}${product.category_name.length > 40 ? '...' : ''}</td>
+                    <td>
+                        ${formatNumber(product.post_count)}
+                        ${product.has_multiple_units ? `<br><small style="color: #999;">(${product.unique_measures} ед.)</small>` : ''}
+                    </td>
+                    <td>${formatCurrency(product.avg_price)}</td>
+                    <td style="color: #4caf50;">${formatCurrency(product.min_price)}</td>
+                    <td style="color: #f44336;">${formatCurrency(product.max_price)}</td>
+                    <td>
+                        ${formatCurrency(priceRange)}
+                        <br><small style="color: #999;">(${priceRangePercent}%)</small>
+                    </td>
+                    <td>${formatNumber(product.total_quantity)}</td>
+                    <td><strong>${formatCurrency(product.total_value)}</strong></td>
+                    <td>
+                        ${product.certificate_percentage > 0 ? 
+                            `<span style="color: #4caf50;">${product.certificate_percentage}%</span>` : 
+                            '<span style="color: #999;">0%</span>'}
+                    </td>
+                    <td>
+                        <button onclick="event.stopPropagation(); showProductDetails(${index})" 
+                                style="background: #0078d4; color: white; border: none; padding: 5px 15px; border-radius: 2px; cursor: pointer; font-size: 0.85em;">
+                            Подробнее
+                        </button>
+                    </td>
+                </tr>
+            `;
+            }).join('');
+            
+            // Store products data globally for modal
+            window.productsData = products;
+        }
+        
+        async function loadData() {
+            // Show dashboard immediately with loading indicators
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('timestamp').textContent = 'Loading data...';
+            
+            try {
+                // Fetch data with timeout
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000);
+                
+                const response = await fetch('/api/insights', {
+                    signal: controller.signal
+                });
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(`HTTP ${response.status}: ${errorData.error || response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                // Check if data has required fields
+                if (!data || typeof data !== 'object') {
+                    throw new Error('Invalid data format received');
+                }
+                
+                // Ensure all required fields exist with defaults
+                if (!data.daily_trends) data.daily_trends = { daily_counts: [], yesterday: {}, yesterday_products: [], yesterday_categories: [] };
+                if (!data.trending_products) data.trending_products = { trending_products: [] };
+                if (!data.weekly_monthly_trends) {
+                    data.weekly_monthly_trends = { 
+                        weekly: { products: [], categories: [] },
+                        monthly: { products: [], categories: [] }
+                    };
+                }
+                
+                // Update UI progressively
+                updateStats(data);
+                await new Promise(resolve => setTimeout(resolve, 10));
+                
+                updateCharts(data);
+                await new Promise(resolve => setTimeout(resolve, 10));
+                
+                updateTables(data);
+                await new Promise(resolve => setTimeout(resolve, 10));
+                
+                loadProductsTable();
+                
+                document.getElementById('timestamp').textContent = 
+                    `Обновлено: ${new Date(data.timestamp).toLocaleString('ru-RU')}`;
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+                
+                if (error.name === 'AbortError') {
+                    document.getElementById('timestamp').innerHTML = `
+                        <span style="color: #e74856;">Превышено время ожидания 
+                        <button class="refresh-btn" onclick="loadData()" style="padding: 5px 15px; margin-left: 10px;">Повторить</button></span>
+                    `;
+                } else {
+                    document.getElementById('timestamp').innerHTML = `
+                        <span style="color: #e74856;">Ошибка: ${error.message}
+                        <button class="refresh-btn" onclick="loadData()" style="padding: 5px 15px; margin-left: 10px;">Повторить</button></span>
+                    `;
+                }
+            }
+        }
+        
+        function updateStats(data) {
+            const stats = [
+                {
+                    title: 'Всего предложений',
+                    value: formatNumber(data.summary.total_offers),
+                    subtitle: 'Активных объявлений'
+                },
+                {
+                    title: 'Категории',
+                    value: data.summary.total_categories,
+                    subtitle: 'Категорий товаров'
+                },
+                {
+                    title: 'Средняя цена',
+                    value: formatCurrency(data.price_distribution.avg_price),
+                    subtitle: 'За единицу'
+                },
+                {
+                    title: 'Новых за 7 дней',
+                    value: formatNumber(data.recent_activity.total_new_offers),
+                    subtitle: 'За последнюю неделю'
+                },
+                {
+                    title: 'С сертификатом',
+                    value: data.certificate_statistics.certificate_percentage + '%',
+                    subtitle: `${formatNumber(data.certificate_statistics.with_certificate)} предложений`
+                },
+                {
+                    title: 'Общее количество',
+                    value: formatNumber(data.quantity_statistics.total_quantity),
+                    subtitle: 'Всех товаров'
+                }
+            ];
+            
+            const grid = document.getElementById('statsGrid');
+            grid.innerHTML = stats.map(stat => `
+                <div class="stat-card">
+                    <h3>${stat.title}</h3>
+                    <div class="value">${stat.value}</div>
+                    <div class="subtitle">${stat.subtitle}</div>
+                </div>
+            `).join('');
+        }
+        
+        function updateCharts(data) {
+            // Power BI Color Palette
+            const powerBIColors = [
+                '#0078d4', '#00bcf2', '#00b294', '#ffb900', '#8661c5',
+                '#e74856', '#0099bc', '#8764b8', '#881798', '#498205'
+            ];
+            
+            // Categories Chart
+            const topCategories = data.category_statistics.slice(0, 10);
+            updateChart('categoriesChart', {
+                type: 'bar',
+                data: {
+                    labels: topCategories.map(c => c.category_name.substring(0, 40)),
+                    datasets: [{
+                        label: 'Количество предложений',
+                        data: topCategories.map(c => c.offer_count),
+                        backgroundColor: powerBIColors[0],
+                        borderWidth: 0,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(50, 49, 48, 0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: (context) => formatNumber(context.parsed.y) + ' offers'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#605e5c'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#edebe9'
+                            },
+                            ticks: {
+                                color: '#605e5c',
+                                callback: (value) => formatNumber(value)
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Price Distribution Chart
+            const priceRanges = data.price_distribution.price_ranges;
+            updateChart('priceChart', {
+                type: 'doughnut',
+                data: {
+                    labels: ['До 100K', '100K-500K', '500K-1M', '1M-5M', '5M-10M', 'Свыше 10M'],
+                    datasets: [{
+                        data: [
+                            priceRanges.under_100k,
+                            priceRanges['100k_500k'],
+                            priceRanges['500k_1m'],
+                            priceRanges['1m_5m'],
+                            priceRanges['5m_10m'],
+                            priceRanges.over_10m
+                        ],
+                        backgroundColor: powerBIColors,
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: '#323130',
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(50, 49, 48, 0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            callbacks: {
+                                label: (context) => {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    return `${label}: ${formatNumber(value)} предложений`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Recent Activity Chart
+            const dailyActivity = data.recent_activity.daily_activity.reverse();
+            updateChart('activityChart', {
+                type: 'line',
+                data: {
+                    labels: dailyActivity.map(d => new Date(d.date).toLocaleDateString()),
+                    datasets: [{
+                        label: 'Новые предложения',
+                        data: dailyActivity.map(d => d.count),
+                        borderColor: powerBIColors[0],
+                        backgroundColor: 'rgba(0, 120, 212, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        pointBackgroundColor: powerBIColors[0]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(50, 49, 48, 0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: (context) => formatNumber(context.parsed.y) + ' offers'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#605e5c'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#edebe9'
+                            },
+                            ticks: {
+                                color: '#605e5c',
+                                callback: (value) => formatNumber(value)
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Certificate Chart
+            updateChart('certificateChart', {
+                type: 'pie',
+                data: {
+                    labels: ['С сертификатом', 'Без сертификата'],
+                    datasets: [{
+                        data: [
+                            data.certificate_statistics.with_certificate,
+                            data.certificate_statistics.without_certificate
+                        ],
+                        backgroundColor: [powerBIColors[2], '#edebe9'],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#323130',
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(50, 49, 48, 0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            callbacks: {
+                                label: (context) => {
+                                    const label = context.label || '';
+                                    const value = context.parsed || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${formatNumber(value)} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Daily Trends Chart
+            const dailyTrends = data.daily_trends.daily_counts.reverse();
+            updateChart('dailyTrendsChart', {
+                type: 'line',
+                data: {
+                    labels: dailyTrends.map(d => new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })),
+                    datasets: [{
+                        label: 'Размещено предложений',
+                        data: dailyTrends.map(d => d.count),
+                        borderColor: powerBIColors[1],
+                        backgroundColor: 'rgba(0, 188, 242, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 2,
+                        pointRadius: 3,
+                        pointHoverRadius: 5,
+                        pointBackgroundColor: powerBIColors[1]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(50, 49, 48, 0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: (context) => `${formatNumber(context.parsed.y)} размещено предложений`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#605e5c'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#edebe9'
+                            },
+                            ticks: {
+                                color: '#605e5c',
+                                callback: (value) => formatNumber(value)
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Update yesterday stats
+            const yesterday = data.daily_trends.yesterday;
+            const yesterdayDate = new Date();
+            yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+            document.getElementById('yesterdayStats').innerHTML = `
+                <h3 style="margin: 0 0 16px 0; color: #323130; font-size: 1.1em; font-weight: 600;">Вчера (${yesterdayDate.toLocaleDateString('ru-RU')})</h3>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
+                    <div style="padding: 16px; background: white; border-radius: 4px; border-left: 3px solid ${powerBIColors[0]};">
+                        <div style="color: #8a8886; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Всего предложений</div>
+                        <div style="font-size: 1.8em; font-weight: 700; color: #323130;">${formatNumber(yesterday.total_offers)}</div>
+                    </div>
+                    <div style="padding: 16px; background: white; border-radius: 4px; border-left: 3px solid ${powerBIColors[1]};">
+                        <div style="color: #8a8886; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Категорий</div>
+                        <div style="font-size: 1.8em; font-weight: 700; color: #323130;">${yesterday.categories}</div>
+                    </div>
+                    <div style="padding: 16px; background: white; border-radius: 4px; border-left: 3px solid ${powerBIColors[2]};">
+                        <div style="color: #8a8886; font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">Уникальных товаров</div>
+                        <div style="font-size: 1.8em; font-weight: 700; color: #323130;">${formatNumber(yesterday.unique_products)}</div>
+                    </div>
+                </div>
+                ${data.daily_trends.yesterday_products.length > 0 ? `
+                <div style="margin-top: 20px; padding: 16px; background: white; border-radius: 4px;">
+                    <div style="color: #605e5c; font-size: 0.85em; font-weight: 600; margin-bottom: 12px;">Топ товары вчера:</div>
+                    <div style="font-size: 0.9em; color: #323130; line-height: 1.8;">
+                        ${data.daily_trends.yesterday_products.slice(0, 5).map((p, i) => 
+                            `<span style="display: inline-block; margin-right: 20px;">${i + 1}. ${p.product_name} (${formatNumber(p.count)} объявлений)</span>`
+                        ).join('')}
+                    </div>
+                </div>
+                ` : ''}
+            `;
+            
+            // Trending Products Chart
+            const trending = data.trending_products.trending_products.slice(0, 10);
+            updateChart('trendingChart', {
+                type: 'bar',
+                data: {
+                    labels: trending.map(p => p.product_name.substring(0, 25)),
+                    datasets: [{
+                        label: 'Объявлений (за 7 дней)',
+                        data: trending.map(p => p.recent_count),
+                        backgroundColor: powerBIColors[3],
+                        borderWidth: 0,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(50, 49, 48, 0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            displayColors: false,
+                            callbacks: {
+                                label: (context) => `${formatNumber(context.parsed.x)} объявлений`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#edebe9'
+                            },
+                            ticks: {
+                                color: '#605e5c',
+                                callback: (value) => formatNumber(value)
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#605e5c'
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Weekly vs Monthly Demand Chart
+            const weeklyCategories = data.weekly_monthly_trends.weekly.categories.slice(0, 5);
+            const monthlyCategories = data.weekly_monthly_trends.monthly.categories.slice(0, 5);
+            const categoryNames = [...new Set([...weeklyCategories.map(c => c.category), ...monthlyCategories.map(c => c.category)])].slice(0, 5);
+            
+            updateChart('demandChart', {
+                type: 'bar',
+                data: {
+                    labels: categoryNames.map(c => c.substring(0, 30)),
+                    datasets: [
+                        {
+                            label: 'Эта неделя',
+                            data: categoryNames.map(name => {
+                                const cat = weeklyCategories.find(c => c.category === name);
+                                return cat ? cat.count : 0;
+                            }),
+                            backgroundColor: powerBIColors[0],
+                            borderWidth: 0,
+                            borderRadius: 4
+                        },
+                        {
+                            label: 'Этот месяц',
+                            data: categoryNames.map(name => {
+                                const cat = monthlyCategories.find(c => c.category === name);
+                                return cat ? cat.count : 0;
+                            }),
+                            backgroundColor: powerBIColors[4],
+                            borderWidth: 0,
+                            borderRadius: 4
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            align: 'end',
+                            labels: {
+                                color: '#323130',
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                },
+                                usePointStyle: true,
+                                pointStyle: 'rectRounded'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(50, 49, 48, 0.95)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            padding: 12,
+                            callbacks: {
+                                label: (context) => `${context.dataset.label}: ${formatNumber(context.parsed.y)} предложений`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#605e5c'
+                            }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#edebe9'
+                            },
+                            ticks: {
+                                color: '#605e5c',
+                                callback: (value) => formatNumber(value)
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateChart(canvasId, config) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            
+            if (charts[canvasId]) {
+                charts[canvasId].destroy();
+            }
+            
+            charts[canvasId] = new Chart(ctx, config);
+        }
+        
+        function updateTables(data) {
+            // Products table is now loaded separately via loadProductsTable()
+            // This function is kept for other tables
+            
+            // Categories Table
+            const categoriesBody = document.getElementById('categoriesTableBody');
+            categoriesBody.innerHTML = data.category_statistics.map(cat => `
+                <tr>
+                    <td>${cat.category_name}</td>
+                    <td>${formatNumber(cat.offer_count)}</td>
+                    <td>${formatCurrency(cat.avg_price)}</td>
+                    <td>${formatCurrency(cat.min_price)}</td>
+                    <td>${formatCurrency(cat.max_price)}</td>
+                    <td>${formatNumber(cat.total_quantity)}</td>
+                </tr>
+            `).join('');
+            
+            // Weekly Products Table
+            const weeklyProductsBody = document.getElementById('weeklyProductsBody');
+            if (weeklyProductsBody && data.weekly_monthly_trends) {
+                weeklyProductsBody.innerHTML = data.weekly_monthly_trends.weekly.products.map((product, index) => `
+                    <tr>
+                        <td><strong>${index + 1}</strong></td>
+                        <td>${product.product_name}</td>
+                        <td>${formatNumber(product.count)}</td>
+                        <td>${formatCurrency(product.avg_price)}</td>
+                        <td>${formatNumber(product.total_quantity)}</td>
+                    </tr>
+                `).join('');
+            }
+            
+            // Monthly Products Table
+            const monthlyProductsBody = document.getElementById('monthlyProductsBody');
+            if (monthlyProductsBody && data.weekly_monthly_trends) {
+                monthlyProductsBody.innerHTML = data.weekly_monthly_trends.monthly.products.map((product, index) => `
+                    <tr>
+                        <td><strong>${index + 1}</strong></td>
+                        <td>${product.product_name}</td>
+                        <td>${formatNumber(product.count)}</td>
+                        <td>${formatCurrency(product.avg_price)}</td>
+                        <td>${formatNumber(product.total_quantity)}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+        
+        // Product details modal functions
+        function showProductDetails(index) {
+            const product = window.productsData[index];
+            if (!product) return;
+            
+            document.getElementById('modalProductName').textContent = product.product_name;
+            
+            const details = `
+                <div class="detail-card" style="border-left-color: #0078d4;">
+                    <h3>Обзор</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Категория</span>
+                            <span class="detail-value" style="font-size: 0.95em; font-weight: 500;">${product.category_name}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Всего объявлений</span>
+                            <span class="detail-value">${formatNumber(product.post_count)}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-card" style="border-left-color: #00b294;">
+                    <h3>Анализ цен</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Средняя цена</span>
+                            <span class="detail-value">${formatCurrency(product.avg_price)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Минимальная цена</span>
+                            <span class="detail-value" style="color: #00b294;">${formatCurrency(product.min_price)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Максимальная цена</span>
+                            <span class="detail-value" style="color: #e74856;">${formatCurrency(product.max_price)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Диапазон цен</span>
+                            <span class="detail-value">${formatCurrency(product.price_range)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Разброс цен</span>
+                            <span class="detail-value">${product.price_spread_percentage.toFixed(1)}%</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Распределение цен</span>
+                            <span class="detail-value" style="font-size: 0.85em;">
+                                Низкие: ${formatNumber(product.price_distribution.low)} | 
+                                Средние: ${formatNumber(product.price_distribution.mid)} | 
+                                Высокие: ${formatNumber(product.price_distribution.high)}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-card" style="border-left-color: #ffb900;">
+                    <h3>Метрики количества</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Общее количество</span>
+                            <span class="detail-value">${formatNumber(product.total_quantity)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Среднее количество</span>
+                            <span class="detail-value">${formatNumber(product.avg_quantity)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Мин. количество</span>
+                            <span class="detail-value">${formatNumber(product.min_quantity)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Макс. количество</span>
+                            <span class="detail-value">${formatNumber(product.max_quantity)}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="detail-card" style="border-left-color: #8661c5;">
+                    <h3>Дополнительная информация</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">Общая рыночная стоимость</span>
+                            <span class="detail-value" style="color: #0078d4;">${formatCurrency(product.total_value)}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Требуется сертификат</span>
+                            <span class="detail-value">
+                                ${product.certificate_percentage > 0 ? 
+                                    `<span style="color: #00b294;">${product.certificate_percentage}%</span> (${formatNumber(product.with_certificate)} предложений)` : 
+                                    '<span style="color: #8a8886;">Не требуется</span>'}
+                            </span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Единицы измерения</span>
+                            <span class="detail-value">${product.unique_measures} уникальных${product.has_multiple_units ? '<br><small style="color: #e74856;">⚠ Несколько единиц</small>' : ''}</span>
+                        </div>
+                        ${product.earliest_post || product.latest_post ? `
+                        <div class="detail-item">
+                            <span class="detail-label">Период дат</span>
+                            <span class="detail-value" style="font-size: 0.85em;">
+                                ${product.earliest_post ? new Date(product.earliest_post).toLocaleDateString('ru-RU') : 'н/д'} - 
+                                ${product.latest_post ? new Date(product.latest_post).toLocaleDateString('ru-RU') : 'н/д'}
+                            </span>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                
+                ${product.has_multiple_units && product.measure_units ? `
+                <div style="background: #fff3cd; padding: 20px; border-radius: 4px; margin-top: 20px; border-left: 4px solid #ffb900;">
+                    <h3 style="margin: 0 0 12px 0; color: #856404; font-size: 1em; font-weight: 600; display: flex; align-items: center; gap: 8px;">
+                        <span>⚠</span> Разбивка цен по единицам измерения
+                    </h3>
+                    <p style="margin: 0 0 16px 0; color: #856404; font-size: 0.85em;">
+                        Этот товар использует несколько единиц измерения. Агрегированные цены выше могут быть несопоставимы напрямую. Просмотрите цены по единицам ниже:
+                    </p>
+                    <div style="display: grid; gap: 12px;">
+                        ${Object.entries(product.measure_units).map(([unit, data]) => `
+                            <div style="background: white; padding: 16px; border-radius: 4px; border: 1px solid #ffe69c;">
+                                <div style="font-weight: 600; color: #323130; margin-bottom: 12px; font-size: 1em;">
+                                    Единица: <span style="color: #0078d4;">${unit}</span>
+                                </div>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; font-size: 0.85em;">
+                                    <div>
+                                        <div style="color: #8a8886; font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Объявлений</div>
+                                        <div style="font-weight: 600; color: #323130;">${formatNumber(data.post_count)}</div>
+                                    </div>
+                                    <div>
+                                        <div style="color: #8a8886; font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Ср. цена</div>
+                                        <div style="font-weight: 600; color: #323130;">${formatCurrency(data.avg_price)}</div>
+                                    </div>
+                                    <div>
+                                        <div style="color: #8a8886; font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Диапазон цен</div>
+                                        <div style="font-weight: 600; color: #323130;">${formatCurrency(data.min_price)} - ${formatCurrency(data.max_price)}</div>
+                                    </div>
+                                    <div>
+                                        <div style="color: #8a8886; font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Общее кол-во</div>
+                                        <div style="font-weight: 600; color: #323130;">${formatNumber(data.total_quantity)}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                ` : ''}
+            `;
+            
+            document.getElementById('modalProductDetails').innerHTML = details;
+            document.getElementById('productModal').style.display = 'block';
+        }
+        
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+        }
+        
+        // Close modal when clicking outside
+        document.getElementById('productModal')?.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeProductModal();
+            }
+        });
+        
+        // Check for updates periodically
+        async function checkForUpdates() {
+            try {
+                const response = await fetch('/api/update-status');
+                const status = await response.json();
+                
+                // Update status indicator
+                updateStatusIndicator(status);
+                
+                // If data was updated, reload dashboard
+                if (status.last_update && status.last_update !== lastUpdateTime) {
+                    console.log('New data detected, refreshing dashboard...');
+                    lastUpdateTime = status.last_update;
+                    await loadData();
+                }
+            } catch (error) {
+                console.error('Error checking for updates:', error);
+            }
+        }
+        
+        function updateStatusIndicator(status) {
+            const indicator = document.getElementById('updateStatus');
+            if (!indicator) return;
+            
+            let statusText = '';
+            let statusColor = '#8a8886';
+            
+            if (status.current_status === 'running') {
+                statusText = '🟢 Обновления активны';
+                statusColor = '#00b294';
+            } else if (status.last_update) {
+                const lastUpdate = new Date(status.last_update);
+                const minutesAgo = Math.floor((new Date() - lastUpdate) / 60000);
+                statusText = `🔵 Обновлено: ${minutesAgo}м назад`;
+                statusColor = '#0078d4';
+            } else {
+                statusText = '⚪ Нет обновлений';
+                statusColor = '#8a8886';
+            }
+            
+            indicator.innerHTML = `<span style="color: ${statusColor}; font-size: 0.9em;">${statusText}</span>`;
+        }
+        
+        function toggleAutoRefresh() {
+            autoRefreshEnabled = !autoRefreshEnabled;
+            const btn = document.getElementById('autoRefreshBtn');
+            
+            if (autoRefreshEnabled) {
+                btn.textContent = '⏸️ Приостановить';
+                btn.style.background = '#8661c5';
+                startAutoRefresh();
+            } else {
+                btn.textContent = '▶️ Возобновить';
+                btn.style.background = '#605e5c';
+                stopAutoRefresh();
+            }
+        }
+        
+        function startAutoRefresh() {
+            if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+            autoRefreshTimer = setInterval(checkForUpdates, autoRefreshInterval);
+        }
+        
+        function stopAutoRefresh() {
+            if (autoRefreshTimer) {
+                clearInterval(autoRefreshTimer);
+                autoRefreshTimer = null;
+            }
+        }
+        
+        async function manualClearCache() {
+            try {
+                const response = await fetch('/api/clear-cache', { method: 'POST' });
+                const result = await response.json();
+                if (result.success) {
+                    console.log('Cache cleared manually');
+                    await loadData();
+                }
+            } catch (error) {
+                console.error('Error clearing cache:', error);
+            }
+        }
+        
+        // Load data on page load
+        loadData();
+        
+        // Start checking for updates
+        startAutoRefresh();
+        
+        // Also check for updates immediately
+        checkForUpdates();
+    </script>
+</body>
+</html>
+

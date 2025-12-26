@@ -1,0 +1,274 @@
+{
+  "statusCode": 200,
+  "result": {
+    "data": [
+      {
+        "name": {
+          "uz": "Mashina, uskuna va mexanizmlar; elektrotexnik uskuna; ularning qismlari",
+          "cyrl": "Машина, ускуна ва механизмлар; электротехник ускуна; уларнинг қисмлари",
+          "ru": "Машины, оборудование и механизмы; электротехническое оборудование; их части",
+          "en": "Vehicles, floating craft and transport-related devices and equipment"
+        },
+        "id": 10,
+        "photo": "contractfiles/X4q52638191419014804290__elektr_jihozlari.jpg",
+        "count": 15159
+      },
+      {
+        "name": {
+          "uz": "Nogironlar jamiyatiga tegishli tashkilotlarning tovarlari",
+          "cyrl": "Ногиронлар жамиятига тегишли ташкилотларнинг товарлари",
+          "ru": " Товары организаций, относящихся к обществам лиц с инвалидностью",
+          "en": "Goods of organizations related to societies for persons with disabilities"
+        },
+        "id": 22,
+        "photo": "contractfiles/s1axz638191421873425881__mud-pots-handicraft-products.jpg",
+        "count": 4095
+      },
+      {
+        "name": {
+          "uz": "Mebel; to‘shak buyumlari, matraslar, chiroqlar va yoritish uskunalari",
+          "cyrl": "Мебель; тўшак буюмлари, матраслар, чироқлар ва ёритиш ускуналари",
+          "ru": "Мебель; постельные принадлежности, матрацы; светильники и осветительное оборудование",
+          "en": "Furniture; bedding, mattresses; lamps and lighting equipment"
+        },
+        "id": 21,
+        "photo": "contractfiles/sm726638191421717208165__mebel.jpg",
+        "count": 3361
+      },
+      {
+        "name": {
+          "uz": "Dori vositalari va tibbiyot buyumlari",
+          "cyrl": "Дори воситалари ва тиббиёт буюмлари",
+          "ru": "Лекарственные средства и медицинская продукция",
+          "en": "Medicines and medical products"
+        },
+        "id": 17,
+        "photo": "contractfiles/1txcW638191420765492897__dori.jpg",
+        "count": 2919
+      },
+      {
+        "name": {
+          "uz": "Noqimmatbaho metallar va ulardan tayyorlangan buyumlar",
+          "cyrl": "Ноқимматбаҳо металлар ва улардан тайёрланган буюмлар",
+          "ru": "Недрагоценные металлы и изделия из них",
+          "en": "Base metals and products thereof"
+        },
+        "id": 9,
+        "photo": "contractfiles/XYtyJ638191418791928768__asosiy_metallar.jpg",
+        "count": 2617
+      },
+      {
+        "name": {
+          "uz": "Elektrotexnika mahsulotlari (O'zeltexsanoat)",
+          "cyrl": "Электротехника маҳсулотлари (Ўзэлтехсаноат)",
+          "ru": "Электротехническая продукция (Узэлтехсаноат)",
+          "en": "Electrical products (Uzeltexsanoat)"
+        },
+        "id": 19,
+        "photo": "contractfiles/J7HA8638191421312812063__elektrasanoat.jpg",
+        "count": 1855
+      },
+      {
+        "name": {
+          "uz": "Plastmassalar va ulardan tayyorlangan tovarlar, kauchuk, rezina va ulardan tayyorlangan tovarlar",
+          "cyrl": "Пластмассалар ва улардан тайёрланган товарлар, каучук, резина ва улардан тайёрланган товарлар",
+          "ru": "Пластмасса, каучук, резина и изделия из них",
+          "en": "Plastic, rubber, rubber and products thereof"
+        },
+        "id": 5,
+        "photo": "contractfiles/EFnrB638191633210588265__bZhl8638191600546415894__caucuk.jpg",
+        "count": 1625
+      },
+      {
+        "name": {
+          "uz": "Tosh, gips, sement, asbest, slyuda yoki shu kabi materiallardan tayyorlangan buyumlar; keramika buyumlar; shisha va undan tayyorlangan buyumlar",
+          "cyrl": "Тош, гипс, цемент, асбест, слюда ёки шу каби материаллардан тайёрланган буюмлар; керамика буюмлар; шиша ва ундан тайёрланган буюмлар",
+          "ru": "Изделия из камня, гипса, цемента, асбеста, слюды или аналогичных материалов; керамические изделия; стекло и изделия из него",
+          "en": "Products made of stone, plaster, cement, asbestos, mica or similar materials; ceramic products; glass and products thereof"
+        },
+        "id": 8,
+        "photo": "contractfiles/1ct14638191418372844056__tosh_gips.jpg",
+        "count": 1342
+      },
+      {
+        "name": {
+          "uz": "Kimyo va unga bog‘liq bo‘lgan sanoat tarmoqlari mahsulotlari",
+          "cyrl": "Кимё ва унга боғлиқ бўлган саноат тармоқлари маҳсулотлари",
+          "ru": "Продукция химической и связанных с ней отраслей промышленности",
+          "en": "Products of the chemical and related industries"
+        },
+        "id": 4,
+        "photo": "contractfiles/CAKPS638191416726847059__kimyo.jpg",
+        "count": 1168
+      },
+      {
+        "name": {
+          "uz": "Qog‘oz, karton va ulardan tayyorlangan buyumlar",
+          "cyrl": "Қоғоз, картон ва улардан тайёрланган буюмлар",
+          "ru": "Бумага, картон и изделия из них",
+          "en": "Paper, cardboard and products thereof"
+        },
+        "id": 16,
+        "photo": "contractfiles/iz8Qm638191420456692542__qog'oz.jpg",
+        "count": 777
+      },
+      {
+        "name": {
+          "uz": "To‘qimachilik materiallari va to‘qimachilik buyumlari",
+          "cyrl": "Тўқимачилик материаллари ва тўқимачилик буюмлари",
+          "ru": "Текстильные материалы и текстильные изделия",
+          "en": "Textile materials and textile products"
+        },
+        "id": 6,
+        "photo": "contractfiles/yD5g1638191417886588508__to'qimachilik.jpg",
+        "count": 727
+      },
+      {
+        "name": {
+          "uz": "Tirik hayvonlar: kelib chiqishi hayvonlarga va o'simliklarga mansub mahsulotlar",
+          "cyrl": "Тирик ҳайвонлар: келиб чиқиши ҳайвонларга ва  ўсимликларга мансуб маҳсулотлар",
+          "ru": "Живые животные; продукты животного и растительного происхождения",
+          "en": "Live animals; products of animal and vegetable origin"
+        },
+        "id": 1,
+        "photo": "contractfiles/Hp41X638191632686907530__IyiQM638191591639581282__jivotni.jpg",
+        "count": 512
+      },
+      {
+        "name": {
+          "uz": "Mineral mahsulotlar",
+          "cyrl": "Минерал маҳсулотлар",
+          "ru": "Минеральные продукты",
+          "en": "Mineral products"
+        },
+        "id": 3,
+        "photo": "contractfiles/I7fzh638191416283609313__Mineral mahsulotlar.jpg",
+        "count": 344
+      },
+      {
+        "name": {
+          "uz": "Yog‘och va undan tayyorlanadigan buyumlar: pista ko‘mir",
+          "cyrl": "Ёғоч ва ундан тайёрланадиган буюмлар: писта кўмир",
+          "ru": "Древесина и изделия из нее; древесный уголь",
+          "en": "Wood and products thereof; charcoal"
+        },
+        "id": 15,
+        "photo": "contractfiles/VCxx6638191420242254033__yog'och.jpg",
+        "count": 303
+      },
+      {
+        "name": {
+          "uz": "Optik, fotografik, kinematografik, o‘lchov, nazorat, aniqlik asboblari va apparatlari; ularning qismlari va kerakli jihozlari",
+          "cyrl": "Оптик, фотографик, кинематографик, ўлчов, назорат, аниқлик асбоблари ва аппаратлари; уларнинг қисмлари ва керакли жиҳозлари",
+          "ru": "Инструменты и аппараты оптические, фотографические, кинематографические, измерительные, контрольные, прецизионные",
+          "en": "Optical, photographic, cinematographic, measuring, control, precision instruments and devices"
+        },
+        "id": 12,
+        "photo": "contractfiles/Oiygq638191634218033263__5nYZF638191587832616143__photo.jpg",
+        "count": 209
+      },
+      {
+        "name": {
+          "uz": "Turli sanoat tovarlari",
+          "cyrl": "Турли саноат товарлари",
+          "ru": "Разные промышленные товары",
+          "en": "Miscellaneous industrial goods"
+        },
+        "id": 13,
+        "photo": "contractfiles/oxfBZ638191419697173226__turli.png",
+        "count": 161
+      },
+      {
+        "name": {
+          "uz": "Yer usti transporti, uchish apparatlari, suzuvchi vositalar hamda transportga tegishli moslamalar va uskunalar",
+          "cyrl": "Ер усти транспорти, учиш аппаратлари, сузувчи воситалар ҳамда транспортга тегишли мосламалар ва ускуналар",
+          "ru": "Транспортные средства, плавучие средства и относящиеся к транспорту устройства и оборудование",
+          "en": "Vehicles, floating craft and transport-related devices and equipment"
+        },
+        "id": 11,
+        "photo": "contractfiles/rRYUW638191419227681228__transport.jpg",
+        "count": 137
+      },
+      {
+        "name": {
+          "uz": "Boshqa mahsulotlar",
+          "cyrl": "Бошқа маҳсулотлар",
+          "ru": "Прочая продукция",
+          "en": "Other products"
+        },
+        "id": 20,
+        "photo": "contractfiles/L58TR638191421479816597__boshqa.jpg",
+        "count": 87
+      },
+      {
+        "name": {
+          "uz": "Poyabzal, bosh kiyimlar",
+          "cyrl": "Пойабзал, бош кийимлар",
+          "ru": "Обувь, головные уборы",
+          "en": "Footwear, headwear"
+        },
+        "id": 7,
+        "photo": "contractfiles/KkQlH638191633692030203__Qawep638191579825973536__obuvi.jpg",
+        "count": 75
+      },
+      {
+        "name": {
+          "uz": "Tayyor oziq-ovqat mahsulotlari",
+          "cyrl": "Тайёр озиқ-овқат маҳсулотлари",
+          "ru": "Готовые пищевые продукты",
+          "en": "Finished food products"
+        },
+        "id": 2,
+        "photo": "contractfiles/njfXH638191634703299537__OSn76638191580200936335__Готовые пищевые продукты.jpg",
+        "count": 44
+      },
+      {
+        "name": {
+          "uz": "Innovatsion mahsulot va xizmatlar",
+          "cyrl": "Инновацион маҳсулот ва хизматлар",
+          "ru": "Инновационные продукты и услуги",
+          "en": "Innovative products and services"
+        },
+        "id": 23,
+        "photo": "contractfiles/NmNPC638191422161384850__inavatsion.jpg",
+        "count": 14
+      },
+      {
+        "name": {
+          "uz": "Qayta tiklanadigan energiya manbalari",
+          "cyrl": "Қайта тикланадиган энергия манбалари",
+          "ru": "Возобновляемые источники энергии",
+          "en": "Renewable energy sources"
+        },
+        "id": 18,
+        "photo": "contractfiles/EiWV3638191421016522459__qayta_tiklanadigan.jpg",
+        "count": 0
+      },
+      {
+        "name": {
+          "uz": "Hunarmandlar tomonidan ishlab chiqarilgan mahsulotlar",
+          "cyrl": "Ҳунармандлар томонидан ишлаб чиқарилган маҳсулотлар",
+          "ru": "Изделия, сделанные ремесленниками",
+          "en": "Products made by artisans"
+        },
+        "id": 24,
+        "photo": "contractfiles/FYujP638283187133264353__Hunarmandlar.png",
+        "count": 0
+      },
+      {
+        "name": {
+          "uz": "Ilmiy-tahliliy va uslubiy ishlar",
+          "cyrl": "Илмий-таҳлилий ва услубий ишлар",
+          "ru": "Научно-аналитические и методические работы",
+          "en": "Scientific, analytical and methodological work"
+        },
+        "id": 25,
+        "photo": "contractfiles/T3sBl638309935957569451__photo_2023-09-22_15-32-15.jpg",
+        "count": 0
+      }
+    ],
+    "total": 24
+  },
+  "error": null,
+  "id": null
+}
