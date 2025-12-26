@@ -40,6 +40,17 @@ DB_NAME = "cooperation_data.db"
 STATUS_FILE = "update_status.json"
 BASE_URL = "https://new.cooperation.uz/ocelot/api-client/Client"
 
+# HTTP заголовки для имитации браузера
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Connection': 'keep-alive',
+    'Referer': 'https://new.cooperation.uz/',
+    'Origin': 'https://new.cooperation.uz'
+}
+
 # Configuration
 UPDATE_INTERVAL_MINUTES = 15  # Update every 15 minutes
 MAX_CATEGORIES_PER_CYCLE = None  # None = all categories, or set a number to limit
@@ -70,7 +81,14 @@ def fetch_categories_with_retry():
     for attempt in range(MAX_RETRIES):
         try:
             print(f"  Попытка {attempt + 1}/{MAX_RETRIES} получения категорий...")
-            response = session.get(url, params=params, timeout=REQUEST_TIMEOUT)
+            
+            # Задержка перед повторной попыткой (но не в первый раз)
+            if attempt > 0:
+                wait_time = (2 ** attempt) * 2  # 4, 8 секунд
+                print(f"  Ожидание {wait_time} секунд перед попыткой...")
+                time.sleep(wait_time)
+            
+            response = session.get(url, params=params, headers=HEADERS, timeout=REQUEST_TIMEOUT)
             response.raise_for_status()
             
             data = response.json()
@@ -81,32 +99,26 @@ def fetch_categories_with_retry():
             else:
                 print(f"  ⚠ Неверный формат ответа")
                 if attempt < MAX_RETRIES - 1:
-                    time.sleep(5)
                     continue
                 return []
         except requests.exceptions.Timeout:
             print(f"  ⏱ Превышено время ожидания (попытка {attempt + 1}/{MAX_RETRIES})")
-            if attempt < MAX_RETRIES - 1:
-                wait_time = (2 ** attempt) * 2  # Exponential backoff: 2, 4, 8 seconds
-                print(f"  Ожидание {wait_time} секунд перед повтором...")
-                time.sleep(wait_time)
-            else:
+            if attempt >= MAX_RETRIES - 1:
                 print(f"  ❌ Не удалось получить категории после {MAX_RETRIES} попыток")
                 return []
         except requests.exceptions.ConnectionError as e:
             print(f"  ⚠ Ошибка подключения: {str(e)[:100]}")
-            if attempt < MAX_RETRIES - 1:
-                wait_time = (2 ** attempt) * 2
-                print(f"  Ожидание {wait_time} секунд перед повтором...")
-                time.sleep(wait_time)
-            else:
+            if attempt >= MAX_RETRIES - 1:
                 print(f"  ❌ Не удалось подключиться после {MAX_RETRIES} попыток")
+                return []
+        except requests.exceptions.HTTPError as e:
+            print(f"  ⚠ HTTP ошибка: {e.response.status_code if hasattr(e, 'response') else 'Unknown'}")
+            if attempt >= MAX_RETRIES - 1:
+                print(f"  ❌ Не удалось получить данные после {MAX_RETRIES} попыток")
                 return []
         except Exception as e:
             print(f"  ❌ Неожиданная ошибка: {str(e)[:100]}")
-            if attempt < MAX_RETRIES - 1:
-                time.sleep(5)
-            else:
+            if attempt >= MAX_RETRIES - 1:
                 return []
     
     return []

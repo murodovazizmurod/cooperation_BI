@@ -8,6 +8,17 @@ import time
 BASE_URL = "https://new.cooperation.uz/ocelot/api-client/Client"
 DB_NAME = "cooperation_data.db"
 
+# HTTP заголовки для имитации браузера
+HEADERS = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Connection': 'keep-alive',
+    'Referer': 'https://new.cooperation.uz/',
+    'Origin': 'https://new.cooperation.uz'
+}
+
 def safe_int(value, default=0):
     """Safely convert value to int, handling None"""
     if value is None:
@@ -49,13 +60,17 @@ def fetch_categories() -> List[Dict[str, Any]]:
     url = f"{BASE_URL}/GetAllTnVedCategory"
     params = {"take": 100, "skip": 0}
     
-    response = requests.get(url, params=params, timeout=30)
-    response.raise_for_status()
-    
-    data = response.json()
-    if data.get("statusCode") == 200 and "result" in data:
-        return data["result"].get("data", [])
-    return []
+    try:
+        response = requests.get(url, params=params, headers=HEADERS, timeout=60)
+        response.raise_for_status()
+        
+        data = response.json()
+        if data.get("statusCode") == 200 and "result" in data:
+            return data["result"].get("data", [])
+        return []
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Ошибка получения категорий: {e}")
+        return []
 
 def update_category(conn, category: Dict[str, Any]):
     """Update category information in the database"""
@@ -82,6 +97,9 @@ def fetch_all_offers_for_category(category_id: int) -> List[Dict[str, Any]]:
     url = f"{BASE_URL}/GetAllOffer"
     
     try:
+        # Задержка перед запросом (чтобы не перегружать сервер)
+        time.sleep(0.5)
+        
         # First, get total count
         params = {
             "OfferType": 1,
@@ -91,7 +109,7 @@ def fetch_all_offers_for_category(category_id: int) -> List[Dict[str, Any]]:
             "firstTnvedCategoryId": category_id
         }
         
-        response = requests.get(url, params=params, timeout=30)
+        response = requests.get(url, params=params, headers=HEADERS, timeout=60)
         response.raise_for_status()
         data = response.json()
         
@@ -104,9 +122,12 @@ def fetch_all_offers_for_category(category_id: int) -> List[Dict[str, Any]]:
         if total_offers == 0:
             return []
         
+        # Задержка перед основным запросом
+        time.sleep(1)
+        
         # Fetch all offers
         params["take"] = total_offers
-        response = requests.get(url, params=params, timeout=120)
+        response = requests.get(url, params=params, headers=HEADERS, timeout=180)
         response.raise_for_status()
         data = response.json()
         
@@ -115,8 +136,14 @@ def fetch_all_offers_for_category(category_id: int) -> List[Dict[str, Any]]:
         
         return []
         
+    except requests.exceptions.Timeout:
+        print(f"    ⏱ Превышено время ожидания для категории {category_id}")
+        return []
+    except requests.exceptions.RequestException as e:
+        print(f"    ⚠ Ошибка получения предложений: {str(e)[:100]}")
+        return []
     except Exception as e:
-        print(f"    ⚠ Error fetching offers: {e}")
+        print(f"    ⚠ Неожиданная ошибка: {str(e)[:100]}")
         return []
 
 def insert_or_update_offers(conn, offers: List[Dict[str, Any]], category_id: int, existing_ids: Set[int]) -> Dict[str, int]:
